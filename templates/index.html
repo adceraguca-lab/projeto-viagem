@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planejamento de Viagem - Dicas de Destinos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .search-box {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        .search-box h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-buscar {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-buscar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-buscar:active {
+            transform: translateY(0);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: white;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .results-header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            color: #667eea;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .dica {
+            background: white;
+            padding: 20px;
+            margin-bottom: 2px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .dica:hover {
+            transform: translateX(5px);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        }
+
+        .dica:last-child {
+            border-radius: 0 0 15px 15px;
+        }
+
+        .dica h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .dica p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .dica a {
+            color: #764ba2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .dica a:hover {
+            text-decoration: underline;
+        }
+
+        .erro {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+
+        .erro.active {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .search-box {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✈️ Planejamento de Viagem</h1>
+            <p>Descubra dicas incríveis para o seu próximo destino!</p>
+        </div>
+
+        <div class="search-box">
+            <h2>🌍 Para onde você vai viajar?</h2>
+            <form id="formBusca">
+                <div class="form-group">
+                    <label for="destino">Digite o destino da sua viagem:</label>
+                    <input 
+                        type="text" 
+                        id="destino" 
+                        name="destino" 
+                        placeholder="Ex: Paris, Rio de Janeiro, Tóquio..." 
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+                <button type="submit" class="btn-buscar">🔍 Buscar Dicas</button>
+            </form>
+        </div>
+
+        <div class="loading">
+            <p>🔄 Buscando dicas para sua viagem...</p>
+        </div>
+
+        <div class="erro" id="erro"></div>
+
+        <div class="results" id="results">
+            <div class="results-header" id="resultsHeader"></div>
+            <div id="dicasContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('formBusca');
+        const loading = document.querySelector('.loading');
+        const results = document.getElementById('results');
+        const erro = document.getElementById('erro');
+        const resultsHeader = document.getElementById('resultsHeader');
+        const dicasContainer = document.getElementById('dicasContainer');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const destino = document.getElementById('destino').value.trim();
+            
+            if (!destino) {
+                mostrarErro('Por favor, informe um destino!');
+                return;
+            }
+
+            // Limpar resultados anteriores
+            results.classList.remove('active');
+            erro.classList.remove('active');
+            loading.classList.add('active');
+
+            try {
+                const formData = new FormData();
+                formData.append('destino', destino);
+
+                const response = await fetch('/buscar', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                loading.classList.remove('active');
+
+                if (!response.ok) {
+                    mostrarErro(data.erro || 'Erro ao buscar dicas');
+                    return;
+                }
+
+                mostrarDicas(data.destino, data.dicas);
+            } catch (error) {
+                loading.classList.remove('active');
+                mostrarErro('Erro ao buscar dicas. Tente novamente.');
+                console.error('Erro:', error);
+            }
+        });
+
+        function mostrarDicas(destino, dicas) {
+            resultsHeader.textContent = `📍 Dicas para ${destino}`;
+            dicasContainer.innerHTML = '';
+
+            if (dicas.length === 0) {
+                dicasContainer.innerHTML = '<div class="dica"><p>Nenhuma dica encontrada.</p></div>';
+            } else {
+                dicas.forEach(dica => {
+                    const dicaElement = document.createElement('div');
+                    dicaElement.className = 'dica';
+                    
+                    // Create title element
+                    const h3 = document.createElement('h3');
+                    h3.textContent = dica.titulo;
+                    dicaElement.appendChild(h3);
+                    
+                    // Create description element
+                    const p = document.createElement('p');
+                    p.textContent = dica.descricao;
+                    dicaElement.appendChild(p);
+                    
+                    // Create link element if valid
+                    if (dica.link && dica.link !== '#' && (dica.link.startsWith('http://') || dica.link.startsWith('https://'))) {
+                        const a = document.createElement('a');
+                        a.href = dica.link;
+                        a.target = '_blank';
+                        a.rel = 'noopener noreferrer';
+                        a.textContent = '🔗 Saiba mais';
+                        dicaElement.appendChild(a);
+                    }
+                    
+                    dicasContainer.appendChild(dicaElement);
+                });
+            }
+
+            results.classList.add('active');
+        }
+
+        function mostrarErro(mensagem) {
+            erro.textContent = mensagem;
+            erro.classList.add('active');
+            
+            setTimeout(() => {
+                erro.classList.remove('active');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
