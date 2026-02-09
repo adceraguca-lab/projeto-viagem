@@ -292,16 +292,25 @@
                     const dicaElement = document.createElement('div');
                     dicaElement.className = 'dica';
                     
-                    let linkHtml = '';
-                    if (dica.link && dica.link !== '#') {
-                        linkHtml = `<a href="${dica.link}" target="_blank" rel="noopener noreferrer">🔗 Saiba mais</a>`;
-                    }
+                    // Create title element
+                    const h3 = document.createElement('h3');
+                    h3.textContent = dica.titulo;
+                    dicaElement.appendChild(h3);
                     
-                    dicaElement.innerHTML = `
-                        <h3>${dica.titulo}</h3>
-                        <p>${dica.descricao}</p>
-                        ${linkHtml}
-                    `;
+                    // Create description element
+                    const p = document.createElement('p');
+                    p.textContent = dica.descricao;
+                    dicaElement.appendChild(p);
+                    
+                    // Create link element if valid
+                    if (dica.link && dica.link !== '#' && (dica.link.startsWith('http://') || dica.link.startsWith('https://'))) {
+                        const a = document.createElement('a');
+                        a.href = dica.link;
+                        a.target = '_blank';
+                        a.rel = 'noopener noreferrer';
+                        a.textContent = '🔗 Saiba mais';
+                        dicaElement.appendChild(a);
+                    }
                     
                     dicasContainer.appendChild(dicaElement);
                 });

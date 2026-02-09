@@ -44,6 +44,10 @@ pip install -r requirements.txt
 
 1. Execute o aplicativo:
 ```bash
+# Para desenvolvimento (com debug):
+FLASK_DEBUG=true python app.py
+
+# Para produção:
 python app.py
 ```
 
@@ -56,6 +60,15 @@ http://localhost:5000
 
 4. Clique em "Buscar Dicas" para ver as recomendações
 
+## 🔒 Segurança
+
+O aplicativo implementa várias medidas de segurança:
+- Sanitização de entrada de usuário para prevenir XSS
+- Validação de URLs antes de exibir links
+- Modo debug desabilitado por padrão em produção
+- Timeout configurado para requisições externas
+- Uso de textContent em vez de innerHTML para prevenir injeção de código
+
 ## 📸 Exemplo de Uso
 
 1. Insira um destino (ex: "Paris", "Rio de Janeiro", "Tóquio")
@@ -64,11 +77,17 @@ http://localhost:5000
 
 ## 🔧 Configuração
 
-O aplicativo roda por padrão na porta 5000. Para alterar, edite o arquivo `app.py`:
+O aplicativo roda por padrão na porta 5000 e em localhost (127.0.0.1).
 
-```python
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)  # Altere a porta aqui
+Para habilitar modo debug durante desenvolvimento:
+```bash
+FLASK_DEBUG=true python app.py
+```
+
+Para produção, recomenda-se usar um servidor WSGI como Gunicorn:
+```bash
+pip install gunicorn
+gunicorn -w 4 -b 0.0.0.0:5000 app:app
 ```
 
 ## 📝 Licença
